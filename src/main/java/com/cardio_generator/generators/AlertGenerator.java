@@ -1,41 +1,40 @@
 package com.cardio_generator.generators;
 
 import java.util.Random;
-
 import com.cardio_generator.outputs.OutputStrategy;
 
 public class AlertGenerator implements PatientDataGenerator {
 
-    public static final Random randomGenerator = new Random();
-    private boolean[] AlertStates; // false = resolved, true = pressed
+    // Ensured that static final fields use UPPER_SNAKE_CASE as per Google Style Guide
+    private static final Random RANDOM_GENERATOR = new Random();
+
+    // Changed array name from "AlertStates" to "alertStates" to follow camelCase convention
+    private boolean[] alertStates; // tracks whether an alert is active (true) or resolved (false)
 
     public AlertGenerator(int patientCount) {
-        AlertStates = new boolean[patientCount + 1];
+        alertStates = new boolean[patientCount + 1];
     }
 
     @Override
+    // Parameter names should be camelCase
     public void generate(int patientId, OutputStrategy outputStrategy) {
-        try {
-            if (AlertStates[patientId]) {
-                if (randomGenerator.nextDouble() < 0.9) { // 90% chance to resolve
-                    AlertStates[patientId] = false;
-                    // Output the alert
-                    outputStrategy.output(patientId, System.currentTimeMillis(), "Alert", "resolved");
-                }
-            } else {
-                double Lambda = 0.1; // Average rate (alerts per period), adjust based on desired frequency
-                double p = -Math.expm1(-Lambda); // Probability of at least one alert in the period
-                boolean alertTriggered = randomGenerator.nextDouble() < p;
-
-                if (alertTriggered) {
-                    AlertStates[patientId] = true;
-                    // Output the alert
-                    outputStrategy.output(patientId, System.currentTimeMillis(), "Alert", "triggered");
-                }
+        if (alertStates[patientId]) {
+            // Method call should follow the field naming convention
+            if (RANDOM_GENERATOR.nextDouble() < 0.9) { // 90% chance to resolve
+                alertStates[patientId] = false;
+                outputStrategy.output(patientId, System.currentTimeMillis(), "Alert", "resolved");
             }
-        } catch (Exception e) {
-            System.err.println("An error occurred while generating alert data for patient " + patientId);
-            e.printStackTrace();
+        } else {
+            // Local variables in methods should be camelCase
+            double lambda = 0.1; // Average rate (alerts per period)
+            double p = -Math.expm1(-lambda); // Probability of at least one alert in the period
+            boolean alertTriggered = RANDOM_GENERATOR.nextDouble() < p;
+
+            if (alertTriggered) {
+                alertStates[patientId] = true;
+                outputStrategy.output(patientId, System.currentTimeMillis(), "Alert", "triggered");
+            }
         }
     }
 }
+
