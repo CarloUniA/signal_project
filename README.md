@@ -66,3 +66,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Project Members
 - Student ID: i6350731
+
+## UML Models
+
+This section includes the UML diagrams created for the project. The diagrams provide a visual representation of the system architecture and the relationships between different components. Also, you can find an documentation which provides an explantion to each diagram.
+
+The diagrams and documentation are available in the `uml_models` directory of this repository.
