@@ -3,18 +3,53 @@ package com.cardio_generator.outputs;
 import org.java_websocket.WebSocket;
 import org.java_websocket.server.WebSocketServer;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 
+/**
+ * Output strategy that sets up a WebSocket server to broadcast messages to all connected clients in real-time.
+ */
 public class WebSocketOutputStrategy implements OutputStrategy {
 
     private WebSocketServer server;
 
+    /**
+     * Constructs a WebSocketOutputStrategy with the specified port.
+     *
+     * @param port the port on which the WebSocket server will listen
+     */
     public WebSocketOutputStrategy(int port) {
         server = new SimpleWebSocketServer(new InetSocketAddress(port));
         System.out.println("WebSocket server created on port: " + port + ", listening for connections...");
+    }
+
+    /**
+     * Starts the WebSocket server.
+     */
+    public void start() {
         server.start();
     }
 
+    /**
+     * Stops the WebSocket server.
+     */
+    public void stop() {
+        try {
+            server.stop();
+        } catch (InterruptedException e) {
+            System.err.println("Failed to stop WebSocket server: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Broadcasts a message to all connected clients.
+     *
+     * @param patientId the unique identifier of the patient
+     * @param timestamp the time at which the measurement was taken, in milliseconds since the Unix epoch
+     * @param label the type of record, e.g., "HeartRate", "BloodPressure"
+     * @param data the measurement value to store in the record
+     */
     @Override
     public void output(int patientId, long timestamp, String label, String data) {
         String message = String.format("%d,%d,%s,%s", patientId, timestamp, label, data);
@@ -24,8 +59,16 @@ public class WebSocketOutputStrategy implements OutputStrategy {
         }
     }
 
+    /**
+     * Implementation of a simple WebSocket server.
+     */
     private static class SimpleWebSocketServer extends WebSocketServer {
 
+        /**
+         * Constructs a SimpleWebSocketServer with the specified address.
+         *
+         * @param address the address on which the server will listen
+         */
         public SimpleWebSocketServer(InetSocketAddress address) {
             super(address);
         }

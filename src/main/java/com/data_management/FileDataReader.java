@@ -46,4 +46,22 @@ public class FileDataReader implements DataReader {
             throw e;
         }
     }
+
+    /**
+     * Parses a line of data and adds it to the specified {@link DataStorage}.
+     *
+     * @param data the line of data to be parsed and added
+     * @param dataStorage the data storage system that will store the patient data
+     */
+    @Override
+    public void handleData(String data, DataStorage dataStorage) {
+        String[] parts = data.split(",");
+        if (parts.length == 4) {
+            int patientId = Integer.parseInt(parts[0]);
+            double measurementValue = Double.parseDouble(parts[1]);
+            String recordType = parts[2];
+            long timestamp = Long.parseLong(parts[3]);
+            dataStorage.addPatientData(patientId, measurementValue, recordType, timestamp);
+        }
+    }
 }
