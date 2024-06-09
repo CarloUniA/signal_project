@@ -1,6 +1,6 @@
 package data_management;
 
-import com.alerts.AlertGenerator;
+import com.alerts.AlertGeneratorWeek7Task;
 import com.data_management.DataStorage;
 import com.data_management.Patient;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AlertGeneratorTest {
 
     private DataStorage dataStorage;
-    private AlertGenerator alertGenerator;
+    private AlertGeneratorWeek7Task alertGenerator;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
 
     @BeforeEach
     public void setup() {
         dataStorage = new DataStorage();
-        alertGenerator = new AlertGenerator(dataStorage);
+        alertGenerator = new AlertGeneratorWeek7Task(dataStorage);
         System.setOut(new PrintStream(outContent));
     }
 

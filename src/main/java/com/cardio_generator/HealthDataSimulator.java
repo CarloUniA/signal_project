@@ -3,16 +3,6 @@ package com.cardio_generator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import com.cardio_generator.generators.AlertGenerator;
-
-import com.cardio_generator.generators.BloodPressureDataGenerator;
-import com.cardio_generator.generators.BloodSaturationDataGenerator;
-import com.cardio_generator.generators.BloodLevelsDataGenerator;
-import com.cardio_generator.generators.ECGDataGenerator;
-import com.cardio_generator.outputs.*;
-import com.cardio_generator.outputs.FileOutputStrategy;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -22,18 +12,41 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import com.cardio_generator.generators.AlertGenerator;
+import com.cardio_generator.generators.BloodPressureDataGenerator;
+import com.cardio_generator.generators.BloodSaturationDataGenerator;
+import com.cardio_generator.generators.BloodLevelsDataGenerator;
+import com.cardio_generator.generators.ECGDataGenerator;
+import com.cardio_generator.outputs.*;
+import com.cardio_generator.outputs.FileOutputStrategy;
+
 /**
  * This class simulates health data for multiple patients using scheduled tasks.
  * It supports different output strategies such as console, file, WebSocket, and TCP.
- *
- * @author Tom
  */
 public class HealthDataSimulator {
-
+    private static HealthDataSimulator instance;
     private static int patientCount = 50; // Default number of patients
     private static ScheduledExecutorService scheduler;
     private static OutputStrategy outputStrategy = new ConsoleOutputStrategy(); // Default output strategy
     private static final Random random = new Random();
+
+    /**
+     * Private constructor to prevent instantiation from other classes.
+     */
+    private HealthDataSimulator() {}
+
+    /**
+     * Provides the global point of access to the single instance of HealthDataSimulator.
+     *
+     * @return the single instance of HealthDataSimulator
+     */
+    public static synchronized HealthDataSimulator getInstance() {
+        if (instance == null) {
+            instance = new HealthDataSimulator();
+        }
+        return instance;
+    }
 
     /**
      * Main entry point for the HealthDataSimulator. It handles command line arguments
@@ -43,7 +56,8 @@ public class HealthDataSimulator {
      * @throws IOException If an I/O error occurs during setup.
      */
     public static void main(String[] args) throws IOException {
-        parseArguments(args);
+        HealthDataSimulator simulator = HealthDataSimulator.getInstance();
+        simulator.parseArguments(args);
         scheduler = Executors.newScheduledThreadPool(patientCount * 4);
         List<Integer> patientIds = initializePatientIds(patientCount);
         Collections.shuffle(patientIds); // Randomize the order of patient IDs
@@ -56,7 +70,7 @@ public class HealthDataSimulator {
      * @param args The command line arguments.
      * @throws IOException If directory creation is needed and fails.
      */
-    private static void parseArguments(String[] args) throws IOException {
+    private void parseArguments(String[] args) throws IOException {
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
                 case "-h":
@@ -116,7 +130,7 @@ public class HealthDataSimulator {
     /**
      * Prints usage information to the standard output.
      */
-    private static void printHelp() {
+    private void printHelp() {
         System.out.println("Usage: java HealthDataSimulator [options]");
         System.out.println("Options:");
         System.out.println("  -h                       Show help and exit.");
